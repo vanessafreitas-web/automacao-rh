@@ -94,12 +94,27 @@ texto(
   8
 );
 
+
 // DATA ADMISSÃO
 texto(
-  body.dataAdmissao,
-  168,
+  body.diaAdmissao,
+  170,
   322,
-  8
+  7
+);
+
+texto(
+  body.mesAdmissao,
+  190,
+  322,
+  7
+);
+
+texto(
+  body.anoAdmissao,
+  206,
+  322,
+  7
 );
 
 // CARGO
