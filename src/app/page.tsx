@@ -1,308 +1,142 @@
-"use client";
+import Link from "next/link";
+import {
+  Bus,
+  UserX,
+  GraduationCap,
+  Home,
+  Building2,
+  ArrowRight,
+  Sparkles,
+} from "lucide-react";
 
-import { useState } from "react";
+const documentos = [
+  {
+    titulo: "Vale Transporte / Ajuda de Custo",
+    descricao: "Gere solicitações de VT e ajuda de custo no modelo oficial.",
+    href: "/vale-transporte",
+    icon: Bus,
+    cor: "from-blue-600 to-blue-800",
+    bg: "bg-blue-50",
+  },
+  {
+    titulo: "Ficha de Desligamento",
+    descricao: "Preencha o motivo principal e gere a ficha de desligamento.",
+    href: "/desligamento",
+    icon: UserX,
+    cor: "from-red-500 to-red-700",
+    bg: "bg-red-50",
+  },
+  {
+    titulo: "Carta Santander",
+    descricao: "Carta para abertura de conta salário Santander.",
+    href: "/carta-santander",
+    icon: Building2,
+    cor: "from-emerald-500 to-emerald-700",
+    bg: "bg-emerald-50",
+  },
+  {
+    titulo: "Declaração de Escolaridade",
+    descricao: "Declaração com nome, RG, CPF, cidade e data.",
+    href: "/declaracao-escolaridade",
+    icon: GraduationCap,
+    cor: "from-purple-500 to-purple-700",
+    bg: "bg-purple-50",
+  },
+  {
+    titulo: "Declaração de Residência",
+    descricao: "Preencha endereço completo e gere a declaração.",
+    href: "/declaracao-residencia",
+    icon: Home,
+    cor: "from-orange-500 to-orange-700",
+    bg: "bg-orange-50",
+  },
+];
 
-export default function Home() {
-  const [form, setForm] = useState({
-    nome: "",
-    endereco: "",
-    numero: "",
-    bairro: "",
-    cidade: "",
-    estado: "",
-    cep: "",
-    posto: "",
-    dia: "",
-    mes: "",
-    ano: "",
-    observacao: "OS 40072026 - VALOR FIXO 300,00",
-
-    transporteIda: "DINHEIRO",
-    valorIda: "",
-
-    transporteVolta: "DINHEIRO",
-    valorVolta: "",
-  });
-
-  function alterar(campo: string, valor: string) {
-    setForm({
-      ...form,
-      [campo]: valor,
-    });
-  }
-
-  async function gerarPDF() {
-    const response = await fetch("/api/gerar-pdf", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(form),
-    });
-
-    const blob = await response.blob();
-
-    const url = window.URL.createObjectURL(blob);
-
-    const a = document.createElement("a");
-
-    a.href = url;
-
-    a.download = `vale-transporte-${form.nome || "colaborador"}.pdf`;
-
-    a.click();
-  }
-
+export default function HomePage() {
   return (
-    <div className="mx-auto max-w-6xl">
-      {/* HEADER */}
-      <div className="mb-8">
+    <div className="mx-auto max-w-7xl">
+      <section className="mb-8 overflow-hidden rounded-[32px] bg-gradient-to-r from-blue-950 via-blue-900 to-blue-700 p-10 text-white shadow-2xl">
+        <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
+          <div>
+            <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-xs font-black uppercase tracking-[0.25em] text-blue-100">
+              <Sparkles size={16} />
+              Sistema Interno
+            </div>
+
+            <h1 className="max-w-3xl text-4xl font-black tracking-tight md:text-5xl">
+            </h1>
+
+            <p className="mt-4 max-w-2xl text-base leading-7 text-blue-100">
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="rounded-3xl bg-white/10 p-5 backdrop-blur">
+              <p className="text-4xl font-black">5+</p>
+              <p className="mt-1 text-sm text-blue-100">Documentos</p>
+            </div>
+
+            <div className="rounded-3xl bg-white/10 p-5 backdrop-blur">
+              <p className="text-4xl font-black"></p>
+              <p className="mt-1 text-sm text-blue-100"></p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div className="mb-6">
         <p className="text-xs font-black uppercase tracking-[0.3em] text-blue-700">
-          Documentos RH
+          Documentos disponíveis
         </p>
 
-        <h1 className="mt-2 text-4xl font-black text-gray-900">
-          Vale Transporte / Ajuda de Custo
-        </h1>
-
-        <p className="mt-2 text-gray-500">
-          Preencha os dados abaixo para gerar automaticamente
-          o documento oficial.
-        </p>
+        <h2 className="mt-2 text-2xl font-black text-gray-900">
+          Escolha o documento
+        </h2>
       </div>
 
-      {/* CARD */}
-      <div className="overflow-hidden rounded-3xl border border-gray-100 bg-white shadow-xl">
-        {/* TOP */}
-        <div className="bg-gradient-to-r from-blue-900 to-blue-700 px-8 py-5">
-          <h2 className="text-lg font-bold text-white">
-            Dados do colaborador
-          </h2>
+      <section className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+        {documentos.map((doc) => {
+          const Icon = doc.icon;
 
-          <p className="text-sm text-blue-100">
-            Informações principais para emissão do documento.
-          </p>
-        </div>
-
-        {/* FORM */}
-        <div className="space-y-8 p-8">
-          {/* IDENTIFICAÇÃO */}
-          <section>
-            <h3 className="mb-4 text-sm font-black uppercase tracking-wider text-gray-500">
-              Identificação
-            </h3>
-
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-              <input
-                className="input"
-                placeholder="Nome completo"
-                value={form.nome}
-                onChange={(e) =>
-                  alterar("nome", e.target.value)
-                }
-              />
-
-              <input
-                className="input"
-                placeholder="Cliente / Posto atual"
-                value={form.posto}
-                onChange={(e) =>
-                  alterar("posto", e.target.value)
-                }
-              />
-            </div>
-          </section>
-
-          {/* ENDEREÇO */}
-          <section>
-            <h3 className="mb-4 text-sm font-black uppercase tracking-wider text-gray-500">
-              Endereço
-            </h3>
-
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
-              <input
-                className="input md:col-span-2"
-                placeholder="Endereço"
-                value={form.endereco}
-                onChange={(e) =>
-                  alterar("endereco", e.target.value)
-                }
-              />
-
-              <input
-                className="input"
-                placeholder="Número"
-                value={form.numero}
-                onChange={(e) =>
-                  alterar("numero", e.target.value)
-                }
-              />
-
-              <input
-                className="input"
-                placeholder="CEP"
-                value={form.cep}
-                onChange={(e) =>
-                  alterar("cep", e.target.value)
-                }
-              />
-
-              <input
-                className="input"
-                placeholder="Bairro"
-                value={form.bairro}
-                onChange={(e) =>
-                  alterar("bairro", e.target.value)
-                }
-              />
-
-              <input
-                className="input"
-                placeholder="Cidade"
-                value={form.cidade}
-                onChange={(e) =>
-                  alterar("cidade", e.target.value)
-                }
-              />
-
-              <input
-                className="input"
-                placeholder="Estado"
-                value={form.estado}
-                onChange={(e) =>
-                  alterar("estado", e.target.value)
-                }
-              />
-            </div>
-          </section>
-
-          {/* ADMISSÃO */}
-          <section>
-            <h3 className="mb-4 text-sm font-black uppercase tracking-wider text-gray-500">
-              Admissão e observação
-            </h3>
-
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
-              <input
-                className="input"
-                placeholder="Dia"
-                value={form.dia}
-                onChange={(e) =>
-                  alterar("dia", e.target.value)
-                }
-              />
-
-              <input
-                className="input"
-                placeholder="Mês"
-                value={form.mes}
-                onChange={(e) =>
-                  alterar("mes", e.target.value)
-                }
-              />
-
-              <input
-                className="input"
-                placeholder="Ano"
-                value={form.ano}
-                onChange={(e) =>
-                  alterar("ano", e.target.value)
-                }
-              />
-
-              <input
-                className="input"
-                placeholder="Observação / OS"
-                value={form.observacao}
-                onChange={(e) =>
-                  alterar("observacao", e.target.value)
-                }
-              />
-            </div>
-          </section>
-
-          {/* TRANSPORTE */}
-          <section>
-            <h3 className="mb-4 text-sm font-black uppercase tracking-wider text-gray-500">
-              Transporte
-            </h3>
-
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-              <select
-                className="input"
-                value={form.transporteIda}
-                onChange={(e) =>
-                  alterar(
-                    "transporteIda",
-                    e.target.value
-                  )
-                }
+          return (
+            <Link
+              key={doc.href}
+              href={doc.href}
+              className="group relative overflow-hidden rounded-[28px] border border-gray-100 bg-white p-7 shadow-lg transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl"
+            >
+              <div
+                className={`mb-6 flex h-14 w-14 items-center justify-center rounded-2xl ${doc.bg}`}
               >
-                <option value="DINHEIRO">
-                  IDA - Dinheiro
-                </option>
+                <div
+                  className={`rounded-xl bg-gradient-to-r ${doc.cor} p-3 text-white shadow-lg`}
+                >
+                  <Icon size={22} />
+                </div>
+              </div>
 
-                <option value="CARTÃO">
-                  IDA - Cartão
-                </option>
+              <h3 className="text-xl font-black text-gray-950">
+                {doc.titulo}
+              </h3>
 
-                <option value="VALE TRANSPORTE">
-                  IDA - Vale Transporte
-                </option>
-              </select>
+              <p className="mt-3 text-sm leading-6 text-gray-500">
+                {doc.descricao}
+              </p>
 
-              <input
-                className="input"
-                placeholder="Valor ida"
-                value={form.valorIda}
-                onChange={(e) =>
-                  alterar("valorIda", e.target.value)
-                }
+              <div className="mt-6 flex items-center gap-2 font-black text-blue-700">
+                Abrir documento
+                <ArrowRight
+                  size={18}
+                  className="transition group-hover:translate-x-1"
+                />
+              </div>
+
+              <div
+                className={`absolute -right-12 -top-12 h-32 w-32 rounded-full bg-gradient-to-r ${doc.cor} opacity-10`}
               />
-
-              <select
-                className="input"
-                value={form.transporteVolta}
-                onChange={(e) =>
-                  alterar(
-                    "transporteVolta",
-                    e.target.value
-                  )
-                }
-              >
-                <option value="DINHEIRO">
-                  VOLTA - Dinheiro
-                </option>
-
-                <option value="CARTÃO">
-                  VOLTA - Cartão
-                </option>
-
-                <option value="VALE TRANSPORTE">
-                  VOLTA - Vale Transporte
-                </option>
-              </select>
-
-              <input
-                className="input"
-                placeholder="Valor volta"
-                value={form.valorVolta}
-                onChange={(e) =>
-                  alterar("valorVolta", e.target.value)
-                }
-              />
-            </div>
-          </section>
-
-          {/* BOTÃO */}
-          <button
-            onClick={gerarPDF}
-            className="w-full rounded-2xl bg-blue-700 px-6 py-4 text-lg font-black text-white shadow-lg transition hover:bg-blue-800"
-          >
-            Gerar PDF
-          </button>
-        </div>
-      </div>
+            </Link>
+          );
+        })}
+      </section>
     </div>
   );
 }
