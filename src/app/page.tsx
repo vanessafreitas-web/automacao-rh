@@ -1,142 +1,329 @@
-import Link from "next/link";
-import {
-  Bus,
-  UserX,
-  GraduationCap,
-  Home,
-  Building2,
-  ArrowRight,
-  Sparkles,
-} from "lucide-react";
+"use client";
 
-const documentos = [
-  {
-    titulo: "Vale Transporte / Ajuda de Custo",
-    descricao: "Gere solicitações de VT e ajuda de custo no modelo oficial.",
-    href: "/vale-transporte",
-    icon: Bus,
-    cor: "from-blue-600 to-blue-800",
-    bg: "bg-blue-50",
-  },
-  {
-    titulo: "Ficha de Desligamento",
-    descricao: "Preencha o motivo principal e gere a ficha de desligamento.",
-    href: "/desligamento",
-    icon: UserX,
-    cor: "from-red-500 to-red-700",
-    bg: "bg-red-50",
-  },
-  {
-    titulo: "Carta Santander",
-    descricao: "Carta para abertura de conta salário Santander.",
-    href: "/carta-santander",
-    icon: Building2,
-    cor: "from-emerald-500 to-emerald-700",
-    bg: "bg-emerald-50",
-  },
-  {
-    titulo: "Declaração de Escolaridade",
-    descricao: "Declaração com nome, RG, CPF, cidade e data.",
-    href: "/declaracao-escolaridade",
-    icon: GraduationCap,
-    cor: "from-purple-500 to-purple-700",
-    bg: "bg-purple-50",
-  },
-  {
-    titulo: "Declaração de Residência",
-    descricao: "Preencha endereço completo e gere a declaração.",
-    href: "/declaracao-residencia",
-    icon: Home,
-    cor: "from-orange-500 to-orange-700",
-    bg: "bg-orange-50",
-  },
-];
+import { useState } from "react";
+import { Download, FileText, Home, GraduationCap, Bus } from "lucide-react";
 
 export default function HomePage() {
+  const [form, setForm] = useState({
+    nome: "",
+    rg: "",
+    cpf: "",
+    endereco: "",
+    numero: "",
+    bairro: "",
+    cidade: "",
+    estado: "MS",
+    cep: "",
+    posto: "",
+    dia: "",
+    mes: "",
+    ano: "",
+    observacao: "OS 40072026 - VALOR FIXO 300,00",
+    transporteIda: "DINHEIRO",
+    valorIda: "",
+    transporteVolta: "DINHEIRO",
+    valorVolta: "",
+  });
+
+  function alterar(campo: string, valor: string) {
+    setForm({ ...form, [campo]: valor });
+  }
+
+  async function baixarPDF(api: string, nomeArquivo: string) {
+    const response = await fetch(api, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        ...form,
+        rua: form.endereco,
+      }),
+    });
+
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = nomeArquivo;
+    a.click();
+
+    window.URL.revokeObjectURL(url);
+  }
+
+  async function baixarAjudaCusto() {
+    await baixarPDF(
+      "/api/gerar-pdf",
+      `ajuda-custo-${form.nome || "colaborador"}.pdf`
+    );
+  }
+
+  async function baixarEscolaridade() {
+    await baixarPDF(
+      "/api/gerar-declaracao-escolaridade",
+      `declaracao-escolaridade-${form.nome || "colaborador"}.pdf`
+    );
+  }
+
+  async function baixarResidencia() {
+    await baixarPDF(
+      "/api/gerar-declaracao-residencia",
+      `declaracao-residencia-${form.nome || "colaborador"}.pdf`
+    );
+  }
+
+  async function baixarTodos() {
+    await baixarAjudaCusto();
+
+    setTimeout(async () => {
+      await baixarEscolaridade();
+    }, 500);
+
+    setTimeout(async () => {
+      await baixarResidencia();
+    }, 1000);
+  }
+
   return (
     <div className="mx-auto max-w-7xl">
-      <section className="mb-8 overflow-hidden rounded-[32px] bg-gradient-to-r from-blue-950 via-blue-900 to-blue-700 p-10 text-white shadow-2xl">
-        <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
-          <div>
-            <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-xs font-black uppercase tracking-[0.25em] text-blue-100">
-              <Sparkles size={16} />
-              Sistema Interno
-            </div>
 
-            <h1 className="max-w-3xl text-4xl font-black tracking-tight md:text-5xl">
-            </h1>
 
-            <p className="mt-4 max-w-2xl text-base leading-7 text-blue-100">
+      <div className="grid grid-cols-1 gap-8 xl:grid-cols-[1.4fr_0.8fr]">
+        <div className="overflow-hidden rounded-3xl border border-gray-100 bg-white shadow-xl">
+          <div className="bg-gradient-to-r from-blue-900 to-blue-700 px-8 py-5">
+            <h2 className="text-lg font-bold text-white">
+              Dados do colaborador
+            </h2>
+
+            <p className="text-sm text-blue-100">
+              Essas informações serão usadas nos documentos selecionados.
             </p>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div className="rounded-3xl bg-white/10 p-5 backdrop-blur">
-              <p className="text-4xl font-black">5+</p>
-              <p className="mt-1 text-sm text-blue-100">Documentos</p>
-            </div>
-
-            <div className="rounded-3xl bg-white/10 p-5 backdrop-blur">
-              <p className="text-4xl font-black"></p>
-              <p className="mt-1 text-sm text-blue-100"></p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <div className="mb-6">
-        <p className="text-xs font-black uppercase tracking-[0.3em] text-blue-700">
-          Documentos disponíveis
-        </p>
-
-        <h2 className="mt-2 text-2xl font-black text-gray-900">
-          Escolha o documento
-        </h2>
-      </div>
-
-      <section className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
-        {documentos.map((doc) => {
-          const Icon = doc.icon;
-
-          return (
-            <Link
-              key={doc.href}
-              href={doc.href}
-              className="group relative overflow-hidden rounded-[28px] border border-gray-100 bg-white p-7 shadow-lg transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl"
-            >
-              <div
-                className={`mb-6 flex h-14 w-14 items-center justify-center rounded-2xl ${doc.bg}`}
-              >
-                <div
-                  className={`rounded-xl bg-gradient-to-r ${doc.cor} p-3 text-white shadow-lg`}
-                >
-                  <Icon size={22} />
-                </div>
-              </div>
-
-              <h3 className="text-xl font-black text-gray-950">
-                {doc.titulo}
+          <div className="space-y-8 p-8">
+            <section>
+              <h3 className="mb-4 text-sm font-black uppercase tracking-wider text-gray-500">
+                Identificação
               </h3>
 
-              <p className="mt-3 text-sm leading-6 text-gray-500">
-                {doc.descricao}
-              </p>
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+                <input
+                  className="input md:col-span-2"
+                  placeholder="Nome completo"
+                  value={form.nome}
+                  onChange={(e) => alterar("nome", e.target.value)}
+                />
 
-              <div className="mt-6 flex items-center gap-2 font-black text-blue-700">
-                Abrir documento
-                <ArrowRight
-                  size={18}
-                  className="transition group-hover:translate-x-1"
+                <input
+                  className="input"
+                  placeholder="Cliente / Posto"
+                  value={form.posto}
+                  onChange={(e) => alterar("posto", e.target.value)}
+                />
+
+                <input
+                  className="input"
+                  placeholder="RG"
+                  value={form.rg}
+                  onChange={(e) => alterar("rg", e.target.value)}
+                />
+
+                <input
+                  className="input"
+                  placeholder="CPF"
+                  value={form.cpf}
+                  onChange={(e) => alterar("cpf", e.target.value)}
+                />
+              </div>
+            </section>
+
+            <section>
+              <h3 className="mb-4 text-sm font-black uppercase tracking-wider text-gray-500">
+                Endereço
+              </h3>
+
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
+                <input
+                  className="input md:col-span-2"
+                  placeholder="Rua / Endereço"
+                  value={form.endereco}
+                  onChange={(e) => alterar("endereco", e.target.value)}
+                />
+
+                <input
+                  className="input"
+                  placeholder="Número"
+                  value={form.numero}
+                  onChange={(e) => alterar("numero", e.target.value)}
+                />
+
+                <input
+                  className="input"
+                  placeholder="CEP"
+                  value={form.cep}
+                  onChange={(e) => alterar("cep", e.target.value)}
+                />
+
+                <input
+                  className="input"
+                  placeholder="Bairro"
+                  value={form.bairro}
+                  onChange={(e) => alterar("bairro", e.target.value)}
+                />
+
+                <input
+                  className="input"
+                  placeholder="Cidade"
+                  value={form.cidade}
+                  onChange={(e) => alterar("cidade", e.target.value)}
+                />
+
+                <input
+                  className="input"
+                  placeholder="Estado"
+                  value={form.estado}
+                  onChange={(e) => alterar("estado", e.target.value)}
+                />
+              </div>
+            </section>
+
+            <section>
+              <h3 className="mb-4 text-sm font-black uppercase tracking-wider text-gray-500">
+                Data e ajuda de custo
+              </h3>
+
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
+                <input
+                  className="input"
+                  placeholder="Dia"
+                  value={form.dia}
+                  onChange={(e) => alterar("dia", e.target.value)}
+                />
+
+                <input
+                  className="input"
+                  placeholder="Mês"
+                  value={form.mes}
+                  onChange={(e) => alterar("mes", e.target.value)}
+                />
+
+                <input
+                  className="input"
+                  placeholder="Ano"
+                  value={form.ano}
+                  onChange={(e) => alterar("ano", e.target.value)}
+                />
+
+                <input
+                  className="input"
+                  placeholder="Observação / OS"
+                  value={form.observacao}
+                  onChange={(e) => alterar("observacao", e.target.value)}
                 />
               </div>
 
-              <div
-                className={`absolute -right-12 -top-12 h-32 w-32 rounded-full bg-gradient-to-r ${doc.cor} opacity-10`}
-              />
-            </Link>
-          );
-        })}
-      </section>
+              <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
+                <select
+                  className="input"
+                  value={form.transporteIda}
+                  onChange={(e) => alterar("transporteIda", e.target.value)}
+                >
+                  <option value="DINHEIRO">IDA - Dinheiro</option>
+                  <option value="CARTÃO">IDA - Cartão</option>
+                  <option value="VALE TRANSPORTE">
+                    IDA - Vale Transporte
+                  </option>
+                </select>
+
+                <input
+                  className="input"
+                  placeholder="Valor ida"
+                  value={form.valorIda}
+                  onChange={(e) => alterar("valorIda", e.target.value)}
+                />
+
+                <select
+                  className="input"
+                  value={form.transporteVolta}
+                  onChange={(e) => alterar("transporteVolta", e.target.value)}
+                >
+                  <option value="DINHEIRO">VOLTA - Dinheiro</option>
+                  <option value="CARTÃO">VOLTA - Cartão</option>
+                  <option value="VALE TRANSPORTE">
+                    VOLTA - Vale Transporte
+                  </option>
+                </select>
+
+                <input
+                  className="input"
+                  placeholder="Valor volta"
+                  value={form.valorVolta}
+                  onChange={(e) => alterar("valorVolta", e.target.value)}
+                />
+              </div>
+            </section>
+          </div>
+        </div>
+
+        <aside className="space-y-5">
+          <div className="rounded-3xl border border-blue-100 bg-white p-6 shadow-xl">
+            <h2 className="text-xl font-black text-gray-950">
+              Baixar documentos
+            </h2>
+
+            <p className="mt-2 text-sm text-gray-500">
+              Escolha quais documentos deseja gerar com os dados preenchidos.
+            </p>
+
+            <div className="mt-6 space-y-3">
+              <button
+                onClick={baixarAjudaCusto}
+                className="flex w-full items-center justify-between rounded-2xl bg-blue-700 px-5 py-4 font-black text-white shadow-lg transition hover:bg-blue-800"
+              >
+                <span className="flex items-center gap-3">
+                  <Bus size={20} />
+                  Ajuda de Custo
+                </span>
+                <Download size={18} />
+              </button>
+
+              <button
+                onClick={baixarEscolaridade}
+                className="flex w-full items-center justify-between rounded-2xl bg-purple-600 px-5 py-4 font-black text-white shadow-lg transition hover:bg-purple-700"
+              >
+                <span className="flex items-center gap-3">
+                  <GraduationCap size={20} />
+                  Declaração Escolaridade
+                </span>
+                <Download size={18} />
+              </button>
+
+              <button
+                onClick={baixarResidencia}
+                className="flex w-full items-center justify-between rounded-2xl bg-orange-600 px-5 py-4 font-black text-white shadow-lg transition hover:bg-orange-700"
+              >
+                <span className="flex items-center gap-3">
+                  <Home size={20} />
+                  Declaração Residência
+                </span>
+                <Download size={18} />
+              </button>
+
+              <button
+                onClick={baixarTodos}
+                className="flex w-full items-center justify-between rounded-2xl bg-gray-950 px-5 py-4 font-black text-white shadow-lg transition hover:bg-black"
+              >
+                <span className="flex items-center gap-3">
+                  <FileText size={20} />
+                  Baixar Todos
+                </span>
+                <Download size={18} />
+              </button>
+            </div>
+          </div>
+        </aside>
+      </div>
     </div>
   );
 }
