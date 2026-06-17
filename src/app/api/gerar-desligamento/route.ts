@@ -54,25 +54,25 @@ texto(body.ano, 105, 520, 9);
 
   // MOTIVOS - PRIMEIRA FICHA
   const motivos: Record<string, [number, number]> = {
-    "Melhor oportunidade de emprego": [55, 710],
+    "Melhor oportunidade de emprego": [70, 710],
     "Mudança de cidade": [292, 710],
 
-    "Abertura de negócio próprio": [55, 696],
+    "Abertura de negócio próprio": [70, 696],
     "Aposentadoria": [292, 696],
 
-    "Ambiente de trabalho": [55, 682],
+    "Ambiente de trabalho": [70, 682],
     "Relacionamento interpessoal": [292, 682],
 
-    "Troca de posto/turno": [55, 668],
+    "Troca de posto/turno": [70, 668],
     "Insatisfação com pagamento/benefícios": [292, 668],
 
-    "Saúde / qualidade de vida": [55, 654],
+    "Saúde / qualidade de vida": [70, 654],
     "Estudos / qualificação": [292, 654],
 
-    "Encerramento posto": [55, 640],
+    "Encerramento posto": [70, 640],
     "Questões pessoais": [292, 640],
 
-    "Perspectiva de crescimento": [55, 626],
+    "Perspectiva de crescimento": [70, 626],
   };
 
   const coordenada = motivos[body.motivo];
