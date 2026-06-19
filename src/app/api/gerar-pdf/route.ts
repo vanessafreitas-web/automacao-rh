@@ -49,7 +49,7 @@ export async function POST(req: Request) {
   texto(body.estado, 402, 704, 10);
   texto(body.cep, 464, 704, 10);
 
-  texto(body.posto, 189, 679, 10);
+  texto(body.posto, 162, 679, 8);
 
   texto(body.dia, 436, 679, 14);
   texto(body.mes, 482, 679, 14);
